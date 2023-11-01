@@ -11,7 +11,7 @@ IREE_BUILD_DIR="$(cd ${IREE_BUILD_DIR:-$TD/../iree-build} && pwd)"
 DEVICE_LIBS=("amdgcn/bitcode/opencl.bc amdgcn/bitcode/ocml.bc amdgcn/bitcode/ockl.bc")
 
 echo "Using IREE source directory: $IREE_SOURCE_DIR"
-LLVM_COMMIT="$(cd $IREE_SOURCE_DIR && git submodule status third_party/llvm-project | awk '{print $1}')"
+LLVM_COMMIT="$(cd $IREE_SOURCE_DIR/third_party/llvm-project && git merge-base HEAD origin/main)"
 echo "Building against LLVM: $LLVM_COMMIT"
 
 echo "Using IREE build directory: $IREE_BUILD_DIR"
@@ -48,7 +48,9 @@ for BC_SRC_FILE in ${DEVICE_LIBS[@]}; do
     cp $BC_SRC_FILE $BC_DST_FILE
 done
 
-ZIP_FILE="$TD/build/amdgpu-device-libs-llvm-${LLVM_COMMIT}.zip"
-rm -f "$ZIP_FILE"
-(cd $STAGE_DIR && zip $ZIP_FILE *)
-echo "Saved zip file to $ZIP_FILE"
+TAR_FILE="$TD/build/amdgpu-device-libs-llvm-${LLVM_COMMIT}.tgz"
+SHA_FILE="$TD/build/amdgpu-device-libs-llvm-${LLVM_COMMIT}.sha256sum"
+rm -f "$TAR_FILE"
+(cd $STAGE_DIR && tar czf $TAR_FILE *)
+echo "Saved tar file to $TAR_FILE"
+sha256sum -b  $TAR_FILE | awk '{print $1}' > $SHA_FILE
