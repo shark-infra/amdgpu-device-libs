@@ -51,3 +51,4 @@ done
 ZIP_FILE="$TD/build/amdgpu-device-libs-llvm-${LLVM_COMMIT}.zip"
 rm -f "$ZIP_FILE"
 (cd $STAGE_DIR && zip $ZIP_FILE *)
+echo "Saved zip file to $ZIP_FILE"
